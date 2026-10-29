@@ -1,0 +1,30 @@
+{
+    "inventory": [
+        {
+            "type": "physical",
+            "id": 1,
+            "name": "Mechanical Keyboard",
+            "price": 120.00,
+            "stock": 15,
+            "weight": 0.9
+        },
+        {
+            "type": "digital",
+            "id": 2,
+            "name": "Python Coding E-Book",
+            "price": 29.99,
+            "stock": 100,
+            "download_size": 15.5
+        }
+    ],
+    "transaction_history": [
+        {
+            "product_id": 1,
+            "amount": 15
+        },
+        {
+            "product_id": 2,
+            "amount": 100
+        }
+    ]
+}
