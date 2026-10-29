@@ -348,20 +348,19 @@ def handle_search_product(inventory):
         print("Product not found.")
 
 
+# Main application loop and menu controller
 def main():
-    #Initialize Inventory object and load data.
     inventory = Inventory()
     inventory.load_from_file()
 
-    print("\n=======================================")
-    print("        INVENTORY MANAGEMENT SYSTEM")
-    print("=======================================")
+    print("\n========================================================")
+    print("        INVENTORY MANAGEMENT SYSTEM (LAB 7)")
+    print("========================================================")
 
-    #Main menu loop.
     while True:
         print("\n----------- MENU -----------")
         print("1. Display All Products")
-        print("2. Add Product")
+        print("2. Add Product (Physical/Digital)")
         print("3. Update Stock")
         print("4. Search Product")
         print("5. Save Inventory")
