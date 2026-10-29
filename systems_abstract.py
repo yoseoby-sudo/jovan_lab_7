@@ -124,44 +124,47 @@ class DigitalProduct(Product):
         }
 
 
-#Managing a collection of products and transaction history.
+# Responsible for managing a collection of products, transactions, and file persistence
 class Inventory:
 
     def __init__(self):
         self._products = []
         self._transaction_history = []
 
-    #Adds a Product object to the inventory list.
     def add_product(self, product):
+        # Adds a Product object to the inventory list
         self._products.append(product)
 
-    #Searches for a Product by ID and returns the object, or None if not found.
     def search_product(self, product_id):
+        # Searches for and returns a Product object by its ID, or None if not found
         for product in self._products:
             if product.product_id == product_id:
                 return product
         return None
 
-    #Displays all products in the inventory.
     def display_all(self):
+        # Displays all products currently in the inventory
         print("\nCurrent Inventory")
-        print("-" * 64)
+        print("-" * 80)
         if not self._products:
             print("No products in inventory.")
         else:
             for product in self._products:
                 product.display_information()
-        print("-" * 64)
+                # If the product can be shipped, show its shipping cost
+                if isinstance(product, CanBeShipped):
+                    print(f"  -> Shipping Cost: ${product.calculate_shipping_cost():.2f}")
+        print("-" * 80)
 
-    #Records a transaction entry.
     def add_transaction(self, product_id, amount):
+        # Records a transaction entry
         self._transaction_history.append({
             "product_id": product_id,
             "amount": amount
         })
 
-    #Loads inventory data and transaction history from JSON file.
     def load_from_file(self, filename="inventory.json"):
+        # Loads inventory data and transaction history from JSON file supporting subclasses
         if os.path.exists(filename):
             print(f"{filename} found.")
             with open(filename, "r") as file:
@@ -171,24 +174,35 @@ class Inventory:
             raw_inventory = data.get("inventory", [])
             self._transaction_history = data.get("transaction_history", [])
 
-            #Convert raw dictionaries from JSON back into Product objects.
             self._products = []
             for item in raw_inventory:
-                product = Product(
-                    item["id"],
-                    item["name"],
-                    item["price"],
-                    item["stock"]
-                )
+                prod_type = item.get("type")
+                if prod_type == "physical":
+                    product = PhysicalProduct(
+                        item["id"],
+                        item["name"],
+                        item["price"],
+                        item["stock"],
+                        item["weight"]
+                    )
+                elif prod_type == "digital":
+                    product = DigitalProduct(
+                        item["id"],
+                        item["name"],
+                        item["price"],
+                        item["stock"],
+                        item["download_size"]
+                    )
+                else:
+                    continue
                 self._products.append(product)
         else:
             print(f"{filename} not found. Starting with empty inventory.")
             self._products = []
             self._transaction_history = []
-    
-    #Saves current inventory and transaction history to JSON file.
+
     def save_to_file(self, filename="inventory.json"):
-        #Convert Product objects into dictionaries using to_dict().
+        # Saves current inventory and transaction history to JSON file
         raw_inventory = [product.to_dict() for product in self._products]
         data = {
             "inventory": raw_inventory,
