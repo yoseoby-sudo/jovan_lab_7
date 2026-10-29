@@ -212,11 +212,16 @@ class Inventory:
             json.dump(data, file, indent=4)
         print("Inventory saved successfully!")
 
-#Handles user input and validation for adding a new product.
+# Handles user input and validation for adding a physical or digital product
 def handle_add_product(inventory):
     print("\nAdd New Product")
+    
+    while True:
+        prod_type = input("Product Type (1: Physical, 2: Digital): ").strip()
+        if prod_type in ["1", "2"]:
+            break
+        print("Invalid choice. Please enter 1 for Physical or 2 for Digital.")
 
-    #Ask for a valid product ID.
     while True:
         product_id_input = input("Product ID: ").strip()
         try:
@@ -225,13 +230,11 @@ def handle_add_product(inventory):
             print("Product ID must be a number.")
             continue
 
-        #Check for duplicate product ID using Inventory method.
         if inventory.search_product(product_id) is not None:
             print("Product ID already exists.")
             continue
         break
 
-    #Ask for a valid product name.
     while True:
         product_name = input("Product Name: ").strip()
         if product_name == "":
@@ -239,7 +242,6 @@ def handle_add_product(inventory):
             continue
         break
 
-    #Ask for a valid product price.
     while True:
         price_input = input("Price: ")
         try:
@@ -252,7 +254,6 @@ def handle_add_product(inventory):
             continue
         break
 
-    #Ask for a valid stock quantity.
     while True:
         stock_input = input("Stock Quantity: ")
         try:
@@ -265,15 +266,39 @@ def handle_add_product(inventory):
             continue
         break
 
-    #Create the new Product object and add it to inventory.
-    new_product = Product(product_id, product_name, price, stock)
+    if prod_type == "1":
+        while True:
+            weight_input = input("Weight (kg): ")
+            try:
+                weight = float(weight_input)
+            except ValueError:
+                print("Weight must be a number.")
+                continue
+            if weight < 0:
+                print("Weight cannot be negative.")
+                continue
+            break
+        new_product = PhysicalProduct(product_id, product_name, price, stock, weight)
+    else:
+        while True:
+            size_input = input("Download Size (MB): ")
+            try:
+                download_size = float(size_input)
+            except ValueError:
+                print("Download size must be a number.")
+                continue
+            if download_size < 0:
+                print("Download size cannot be negative.")
+                continue
+            break
+        new_product = DigitalProduct(product_id, product_name, price, stock, download_size)
+
     inventory.add_product(new_product)
     inventory.add_transaction(product_id, stock)
-
     print("Product added successfully!")
 
 
-#Handles user input and logic for updating product stock.
+# Handles user input and logic for updating product stock
 def handle_update_stock(inventory):
     product_id_input = input("Product ID: ")
     try:
@@ -295,7 +320,6 @@ def handle_update_stock(inventory):
             print("Stock quantity cannot be negative.")
             return
 
-        #Update stock via the Product object method (Encapsulation).
         product.update_stock(quantity)
         inventory.add_transaction(product_id, quantity)
         print("Stock updated successfully!")
@@ -303,7 +327,7 @@ def handle_update_stock(inventory):
         print("Product not found.")
 
 
-#Handles searching for a product by ID and displaying its details.
+# Handles searching for a product by ID and displaying its details
 def handle_search_product(inventory):
     while True:
         product_id_input = input("Product ID to Search: ")
@@ -317,6 +341,8 @@ def handle_search_product(inventory):
         if product:
             print("\nProduct Found")
             product.display_information()
+            if isinstance(product, CanBeShipped):
+                print(f"  -> Shipping Cost: ${product.calculate_shipping_cost():.2f}")
             break
 
         print("Product not found.")
