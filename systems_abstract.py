@@ -60,6 +60,70 @@ class Product(ABC):
         # Abstract method to convert product to dictionary for JSON persistence
         pass
 
+# Represents a physical product that has weight and requires shipping
+class PhysicalProduct(Product, CanBeShipped):
+
+    def __init__(self, product_id, name, price, stock, weight):
+        super().__init__(product_id, name, price, stock)
+        self._weight = weight
+
+    @property
+    def weight(self):
+        return self._weight
+
+    def display_information(self):
+        # Overrides parent display_information to include physical attributes
+        super().display_information()
+        print(f"Weight: {self._weight}kg | Fulfilment: {self.get_fulfilment_info()}")
+
+    def get_fulfilment_info(self):
+        return "Requires physical shipping and warehousing."
+
+    def calculate_shipping_cost(self):
+        # Example rule: $5 base fee + $2 per kg
+        return 5.00 + (self._weight * 2.00)
+
+    def to_dict(self):
+        return {
+            "type": "physical",
+            "id": self._product_id,
+            "name": self._name,
+            "price": self._price,
+            "stock": self._stock,
+            "weight": self._weight
+        }
+
+
+# Represents a digital product that has a download size
+class DigitalProduct(Product):
+
+    def __init__(self, product_id, name, price, stock, download_size):
+        super().__init__(product_id, name, price, stock)
+        self._download_size = download_size
+
+    @property
+    def download_size(self):
+        return self._download_size
+
+    def display_information(self):
+        # Overrides parent display_information to include digital attributes
+        super().display_information()
+        print(f"Size: {self._download_size}MB | Fulfilment: {self.get_fulfilment_info()}")
+
+    def get_fulfilment_info(self):
+        return "Delivered instantly via download link."
+
+    def to_dict(self):
+        return {
+            "type": "digital",
+            "id": self._product_id,
+            "name": self._name,
+            "price": self._price,
+            "stock": self._stock,
+            "download_size": self._download_size
+        }
+
+
 #Managing a collection of products and transaction history.
 class Inventory:
 
