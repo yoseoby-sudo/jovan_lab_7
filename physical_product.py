@@ -1,5 +1,5 @@
 from product import Product
-from can_be_shipped import CanBeShipped
+from shipping import CanBeShipped
 
 # Represents a physical product that has weight and requires shipping
 class PhysicalProduct(Product, CanBeShipped):
