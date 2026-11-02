@@ -23,6 +23,14 @@
             "price": 75.0,
             "stock": 4,
             "weight": 0.2
+        },
+        {
+            "type": "digital",
+            "id": 1004,
+            "name": "Digital Cookbook",
+            "price": 50.0,
+            "stock": 4,
+            "download_size": 80.0
         }
     ],
     "transaction_history": [
@@ -36,6 +44,10 @@
         },
         {
             "product_id": 1003,
+            "amount": 4
+        },
+        {
+            "product_id": 1004,
             "amount": 4
         }
     ]
